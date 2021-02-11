@@ -74,22 +74,22 @@
         <div class="container is-max-desktop p-5">
             <div class="column pt-6 pl-0 pr-0">
                 <!-- card cart component แสดงข้อมูลที่อยู่ใน Localstorage ---------------------------------------------->
-                <div class="card mb-4">
+                <div class="card mb-4" v-for="item in cart">
                     <div class="card-content p-0">
                         <div class="media">
                             <div class="media-left">
                                 <figure class="image is-96x96">
-                                    <img src="https://images.unsplash.com/photo-1585459733441-9b415fed25b3?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=80"
+                                    <img :src="item.image"
                                         alt="Placeholder image">
                                 </figure>
                             </div>
                             <div class="media-content pt-2">
-                                <p class="is-5">(ตัวอย่าง) Lumix GH5</p>
-                                <p class="has-text-grey-light is-6">Panasonic</p>
+                                <p class="is-5">{{item.title}}</p>
+                                <p class="has-text-grey-light is-6">{{item.brand}}</p>
                                 <div style="display: flex;justify-content: space-between;">
                                     <div>
-                                        <span class="is-6 has-text-danger">44900</span>
-                                        <span>x0</span>
+                                        <span class="is-6 has-text-danger">{{item.price}}</span>
+                                        <span>x{{item.quantity}}</span>
                                     </div>
                                 </div>
                             </div>
@@ -105,7 +105,7 @@
                 </div>
                 <div class="column is-3 has-text-right">
                     <!-- Total here ---------------------------------------- -->
-                    123 ฿
+                    {{toTal}} ฿
                 </div>
             </div>
 
@@ -122,19 +122,19 @@
                 <div class="column">
                     <label class="label">Firstname</label>
                     <div class="control">
-                        <input class="input" type="text">
+                        <input class="input" type="text" v-model="fname">
                     </div>
                 </div>
                 <div class="column">
                     <label class="label">Lastname</label>
                     <div class="control">
-                        <input class="input" type="text">
+                        <input class="input" type="text" v-model="lname">
                     </div>
                 </div>
                 <div class="column">
                     <label class="label">Tel</label>
                     <div class="control">
-                        <input class="input" type="text">
+                        <input class="input" type="text" v-model="tel">
                     </div>
                 </div>
             </div>
@@ -144,19 +144,19 @@
                 <div class="column">
                     <label class="label">House No.</label>
                     <div class="control">
-                        <input class="input" type="text">
+                        <input class="input" type="text" v-model="house">
                     </div>
                 </div>
                 <div class="column">
                     <label class="label">Street</label>
                     <div class="control">
-                        <input class="input" type="text">
+                        <input class="input" type="text" v-model="street">
                     </div>
                 </div>
                 <div class="column">
                     <label class="label">Sub-district</label>
                     <div class="control">
-                        <input class="input" type="text">
+                        <input class="input" type="text" v-model="subdis">
                     </div>
                 </div>
             </div>
@@ -164,19 +164,19 @@
                 <div class="column">
                     <label class="label">District</label>
                     <div class="control">
-                        <input class="input" type="text">
+                        <input class="input" type="text" v-model="district">
                     </div>
                 </div>
                 <div class="column">
                     <label class="label">Province</label>
                     <div class="control">
-                        <input class="input" type="text">
+                        <input class="input" type="text" v-model="province">
                     </div>
                 </div>
                 <div class="column">
                     <label class="label">Postal Code</label>
                     <div class="control">
-                        <input class="input" type="number">
+                        <input class="input" type="number" v-model="code">
                     </div>
                 </div>
             </div>
@@ -198,7 +198,36 @@
                     Order Table ของนักศึกษา
                     <table id='order-table' style="width: 100%;" class="table is-bordered">
                         <!-- ใส่ข้อมูลของ table ไว้ในนี้ -------------------------------------------->
-
+                        <tr>
+                            <th colspan="4" style='text-align: center;'>Order Detail</th>
+                        </tr>
+                        <tr>
+                            <td colspan="2" rowspan="2" style='width: 50%;'><b>ชื่อ {{fname}} {{lname}}</b></td>
+                            <td colspan="2" style='width: 50%;'><b>บ้านเลขที่ {{house}} ถนน {{street}} ตำบล/แขวง {{subdis}}</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style='width: 50%;'><b>อำเภอ/เขต {{district}} จังหวัด {{province}} {{code}}</b></td>
+                        </tr>
+                        <tr>
+                            <th colspan="4" style='text-align: center;'>รายการสินค้า</th>
+                        </tr>
+                        <tr>
+                            <th>ชื่อสินค้า</th>
+                            <th>ราคาต่อหน่วย</th>
+                            <th>จำนวน</th>
+                            <th>ราคารวม</th>
+                        </tr>
+                        <tr v-for="product, i in cart">
+                            <td>{{product.title}}</td>
+                            <td>{{product.price}}</td>
+                            <td>{{product.quantity}}</td>
+                            <td>{{product.price*product.quantity}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"></td>
+                            <th>ราคารวมทั้งหมด</th>
+                            <th>{{toTal}}</th>
+                        </tr>
                     </table>
                 </section>
             </div>
@@ -215,7 +244,27 @@
                 modal_confirm_order: false,
                 show_modal: false,
                 order_detail: {},
+                fname: '',
+                lname: '',
+                tel: '',
+                house: '',
+                street: '',
+                subdis: '',
+                disdistrict: '',
+                province: '',
+                code: '',
             },
+            created(){
+                var cart = JSON.parse(localStorage.getItem("cart"));
+                this.cart = cart;
+            },
+            computed: {
+                toTal () {
+                    return this.cart.reduce(function(total, num) {
+                        return total + (num.price * num.quantity);
+                    }, 0)
+                }
+            }
         })
     </script>
 

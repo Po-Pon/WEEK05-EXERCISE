@@ -94,7 +94,7 @@
                     <div class="is-multiline columns is-variable is-2">
 
                         <!-- Card element start here------------------------------------------>
-                        <div id="card_product" class="column is-one-quarter" v-for="product in products">
+                        <div id="card_product" class="column is-one-quarter" v-for="(product,index) in products">
                             <div class="card" v-bind:class="{'has-background-warning-light':product.is_favorite}">
                                 <div class="card-image">
                                     <figure class="image is-1by1">
@@ -128,7 +128,7 @@
                                         </div>
 
                                         <!-- >>>>>ไอคอนรูปตะกร้า <<<<<<,s----------------------------------------->
-                                        <div class="icon is-size-4" @click="cart.push(product)">
+                                        <div class="icon is-size-4" @click="addToCart(index)">
                                             <i class="fas fa-shopping-cart has-text-warning"></i>
                                         </div>
 
@@ -150,7 +150,7 @@
                 </div>
 
                 <!-- Card element start here ------------------------------------------>
-                <div v-for="product in cart" class="card mb-4">
+                <div v-for="(product,index) in cart" class="card mb-4">
                     <div class="card-content p-0">
                         <div class="media">
                             <div class="media-left">
@@ -170,7 +170,7 @@
                                     </div>
                                     <div>
                                         <!-- icon รูปถังขยะ------------------------------------------- -->
-                                        <span class="icon mr-2" key="false">
+                                        <span @click="removeFromCart(index)" class="icon mr-2" key="false">
                                             <i class="far fa-trash-alt"></i>
                                         </span>
                                     </div>
@@ -181,11 +181,11 @@
                 </div>
                 <div style="display: flex;justify-content: space-between;font-size: 1.25rem;">
                     <span class="has-text-weight-bold">Total</span>
-                    <span id="totalPrice">123</span>
+                    <span id="totalPrice" >{{toTal}}</span>
                 </div>
 
                 <!-- ปุ่ม Checkout ------------------------------------------------------------ -->
-                <a class="button is-warning mt-3" style="width: 100%;">Checkout</a>
+                <a @click="goCheckout()"class="button is-warning mt-3" style="width: 100%;">Checkout</a>
 
             </div>
         </div>
@@ -198,7 +198,7 @@
         var app = new Vue({
             el: '#app',
             data: {
-                shopName: 'NoName Shop',
+                shopName: 'PONPON Shop',
                 products: [
                     {
                         id: 0,
@@ -274,6 +274,29 @@
                 cart: [],
                 show_modal: false
             },
+            methods: {
+                addToCart: function (index) {
+                    this.products[index].quantity++;
+                    this.cart = this.products.filter((item) => {return item.quantity > 0; });
+                },
+                removeFromCart (index) {
+                    this.products[this.cart[index].id].quantity = 0;
+                    this.cart = this.products.filter((item) => {return item.quantity > 0; });
+                },
+                goCheckout () {
+                    var myJSON = JSON.stringify(this.cart);
+                    localStorage.setItem("cart", myJSON);
+                    window.location.replace('checkout.html');
+                }
+
+            },
+            computed: {
+                toTal () {
+                    return this.cart.reduce(function(total, num) {
+                        return total + (num.price * num.quantity);
+                    }, 0)
+                }
+            }
         })
     </script>
 

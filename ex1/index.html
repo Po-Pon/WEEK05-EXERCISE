@@ -103,7 +103,7 @@
             <div id='ex2'>
 
                 <!-- ปุ่ม Add Student------------------- -->
-                <a class="button is-primary">Add Student</a>
+                <a class="button is-primary" @click = "addStudent()">Add Student</a>
 
                 <div>
                     <table class="table">
@@ -116,12 +116,12 @@
                         </thead>
                         <tbody>
                             <!-- ตัวอย่างข้อมูล------------ -->
-                            <tr>
-                                <td>นายxxxxx yyyyy</td>
-                                <td>99</td>
+                            <tr v-for="(student, index) in students">
+                                <td>{{student.name}}</td>
+                                <td>{{student.score}}</td>
                                 <td>
                                     <!-- ปุ่ม Delete------------------- -->
-                                    <a class="button is-danger">Delete</a>
+                                    <a class="button is-danger" @click ="removeStudent(index)">Delete</a>
                                 </td>
                             </tr>
 
@@ -170,14 +170,14 @@
                             <th class="is-warning">sum</th>
                             <td>
                                 <!-- แสดงผลรวมคะแนนที่นี้ -->
-                                120
+                                {{sumScore}}
                             </td>
                         </tr>
                         <tr>
                             <th class="is-primary">avarage</th>
                             <td>
                                 <!-- แสดงค่าเฉลี่ยที่นี่ -->
-                                12.3
+                                {{avarageScore}}
                             </td>
                         </tr>
                     </tbody>
@@ -239,6 +239,11 @@
                             <td>0 --> 1</td>
                             <td>Sunday --> Monday</td>
                         </tr>
+                        <tr v-for="log in logs">
+                            <td>{{log.date}}</td>
+                            <td>{{log.log}}</td>
+                            <td>{{log.title}}</td>
+                        </tr>
 
                     </tbody>
                 </table>
@@ -254,7 +259,7 @@
             el: '#app',
             data: {
                 message: 'Hello Vue!',
-                students: [],
+                students: [{ name: 'นายxxxxx yyyyy', score: 99 }],
                 day_data: [
                     { title: 'Sunday', value: '0' },
                     { title: 'Monday', value: '1' },
@@ -265,8 +270,51 @@
                     { title: 'Saturday', value: '6' },
                 ],
                 day_select: 0,
-                logs: []
+                logs: [],
+                prename: '',
+                fname: '',
+                lname: '',
+                score: '',
+                months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
             },
+            methods: {
+                addStudent: function() {
+                    if(this.prename ==='' || this.fname === '' || this.lname === '' || this.score ===''){
+                        alert("Please enter all inputs")
+                    }
+                    else if(0 <= this.score && this.score <= 100){
+                        this.students.push({ name: this.prename+this.fname+this.lname, score: this.score })
+                    }else{
+                        alert("Score is incorrect")
+                    }
+                },
+                removeStudent: function(index) {
+                    this.$delete(this.students, index)
+                }
+            },
+            computed: {
+                sumScore () {
+                    return this.students.reduce(function(total, num) {
+                        return total + parseInt(num.score);
+                    }, 0)
+                },
+                avarageScore () {
+                    return (this.sumScore / this.students.length).toFixed(1);
+
+                }
+            },
+            watch: {
+                day_select (newVal, oldVal){
+                    console.log({newVal,oldVal})
+                    var datedate = new Date();
+                    this.logs.push({
+                        date: datedate.getDate() + ' ' + this.months[datedate.getMonth()] + ' ' + datedate.getFullYear() + ' ' + datedate.getHours() + ':' + datedate.getMinutes() + ':' + datedate.getSeconds(),
+                        log: oldVal + ' --> ' + newVal,
+                        title: this.day_data[oldVal].title + ' --> ' + this.day_data[newVal].title
+                    })
+                }
+            }
+
 
         })
     </script>
